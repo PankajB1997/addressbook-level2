@@ -1,13 +1,16 @@
 package seedu.addressbook.data;
 
+import seedu.addressbook.commands.Tagging;
 import seedu.addressbook.data.person.*;
 import seedu.addressbook.data.person.UniquePersonList.*;
 import seedu.addressbook.data.tag.UniqueTagList;
 import seedu.addressbook.data.tag.UniqueTagList.*;
 import seedu.addressbook.data.tag.Tag;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,7 +25,8 @@ public class AddressBook {
 
     private final UniquePersonList allPersons;
     private final UniqueTagList allTags; // can contain tags not attached to any person
-
+    private static ArrayList<Tagging> updatedTagsList = new ArrayList<Tagging>();
+    
     /**
      * Creates an empty address book.
      */
@@ -79,9 +83,19 @@ public class AddressBook {
     public void addPerson(Person toAdd) throws DuplicatePersonException {
         syncTagsWithMasterList(toAdd);
         allPersons.add(toAdd);
+        addPersonToTaggingHistory(toAdd);
     }
 
-    /**
+    private void addPersonToTaggingHistory(Person toAdd) {
+    	List<Tag> addedTags = toAdd.getTags().getInternalList();
+		for(Tag tag: addedTags){
+			Tagging addedTag = new Tagging();
+			addedTag.addTag(true, toAdd.getName().toString(), tag);
+			updatedTagsList.add(addedTag);
+		}
+	}
+
+	/**
      * Adds a tag to the list of tags present in the address book.
      *
      * @throws DuplicateTagException if an equivalent tag already exists.
@@ -110,10 +124,20 @@ public class AddressBook {
      * @throws PersonNotFoundException if no such Person could be found.
      */
     public void removePerson(ReadOnlyPerson toRemove) throws PersonNotFoundException {
-        allPersons.remove(toRemove);
+        removePersonFromTaggingHistory(toRemove);
+    	allPersons.remove(toRemove);
     }
 
-    /**
+    private void removePersonFromTaggingHistory(ReadOnlyPerson toRemove) {
+		List<Tag> removeTags = toRemove.getTags().getInternalList();
+		for(Tag tag: removeTags){
+			Tagging removedTag = new Tagging();
+			removedTag.addTag(false, toRemove.getName().toString(), tag);
+			updatedTagsList.add(removedTag);
+		}
+	}
+
+	/**
      * Removes the equivalent Tag from the address book.
      *
      * @throws TagNotFoundException if no such Tag could be found.
@@ -142,5 +166,11 @@ public class AddressBook {
      */
     public UniqueTagList getAllTags() {
         return new UniqueTagList(allTags);
+    }
+    
+    public static void displayTagsUpdatedInThisSession(){
+    	for(int i=0; i<updatedTagsList.size(); i++){
+    		System.out.println(updatedTagsList.get(i).fetchUpdatedTag());
+    	}
     }
 }

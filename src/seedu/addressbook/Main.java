@@ -87,6 +87,7 @@ public class Main {
             ui.showResultToUser(result);
 
         } while (!ExitCommand.isExit(command));
+        AddressBook.displayTagsUpdatedInThisSession();
     }
 
     /** Updates the {@link #lastShownList} if the result contains a list of Persons. */
@@ -96,7 +97,7 @@ public class Main {
             lastShownList = personList.get();
         }
     }
-
+    
     /**
      * Executes the command and returns the result.
      * 
