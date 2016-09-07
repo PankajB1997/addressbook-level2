@@ -14,6 +14,8 @@ public class Person implements ReadOnlyPerson {
     private Phone phone;
     private Email email;
     private Address address;
+    private int sequenceNumber;
+    private static int nextSequenceNumber = 1;
 
     private final UniqueTagList tags;
     /**
@@ -25,6 +27,8 @@ public class Person implements ReadOnlyPerson {
         this.email = email;
         this.address = address;
         this.tags = new UniqueTagList(tags); // protect internal tags from changes in the arg list
+        this.sequenceNumber = Person.nextSequenceNumber;
+        Person.nextSequenceNumber++;
     }
 
     /**
@@ -83,5 +87,16 @@ public class Person implements ReadOnlyPerson {
     public String toString() {
         return getAsTextShowAll();
     }
-
+    
+    /**
+     * Returns a concatenated version of the printable strings of each object.
+     */
+   public String getPrintableString(Printable... printables){
+	   String result = "";
+	   for (Printable p: printables){
+		   result += p.getPrintableString() + ", ";
+	   }
+	   result = result.substring(0, result.length()-1) + ".";
+	   return result;
+   }
 }
