@@ -3,6 +3,7 @@ package seedu.addressbook.data.person;
 import seedu.addressbook.data.exception.IllegalValueException;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 /**
@@ -61,4 +62,36 @@ public class Name {
         return fullName.hashCode();
     }
 
+    /**
+     * Returns true of the other name is very similar to this name.
+     * Two names are considered similar if they both are equal, one of them is a subset of the other, they are in different order, or if they are in different cases
+     */
+     public boolean isSimilar(Name other) {
+    	    return equalNames(this, other)
+    	    	   || subset(this, other)
+    	    	   || inDifferentOrder(this, other)
+    	    	   || inDifferentCases(this, other);
+     }
+
+	private boolean inDifferentCases(Name name, Name other) {
+		// TODO Auto-generated method stub
+		return name.toString().toLowerCase().equals(other.toString().toLowerCase());
+	}
+
+	private boolean inDifferentOrder(Name name, Name other) {
+		// TODO Auto-generated method stub
+		return (new HashSet<>(Arrays.asList(name.toString().toLowerCase().split(" ")))).equals(new HashSet<>(Arrays.asList(other.toString().toLowerCase().split(" "))));
+	}
+
+	private boolean subset(Name name, Name other) {
+		// TODO Auto-generated method stub
+		return name.toString().contains(other.toString())
+				|| other.toString().contains(name.toString());
+	}
+
+	private boolean equalNames(Name name, Name other) {
+		// TODO Auto-generated method stub
+		return name.toString().equals(other.toString());
+	}
+    
 }
